@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
+pragma solidity ^0.8.17;
+
 import "./IAttestor.sol";
+import "openzeppelin-contracts/access/Ownable.sol";
 
-
-contract Attestor is IAttestor {
+contract Attestor is IAttestor, Ownable {
 
     string public displayName;
 
@@ -17,12 +21,12 @@ contract Attestor is IAttestor {
     // attestations struct
     mapping(uint => AttestationWithRevocation) public attestations;
 
-    constructor(displayName, CIDOrBytes memory info) {
-        displayName = displayName;
+    constructor(string memory _displayName, CIDOrBytes memory info) {
+        displayName = _displayName;
         setAttestorInfo(info);
     }
 
-    function displayName() external view returns (string memory) {
+    function getdisplayName() external view returns (string memory) {
         return displayName;
     }
 
@@ -52,30 +56,8 @@ contract Attestor is IAttestor {
         revoked = attestations[id].revoked;
     }
 
-    /// THIS IS GAS-EXPENSIVE. YOU SHOULD DO THIS OFF-CHAIN IF YOU HAVE THE OPTION TO.
-    function getLiveAttestations(address subject) public view returns (uint[] memory) {
-        uint[] memory liveAttestations = new uint[](0);
-        for (uint i = 0; i < attestations.length; i++) {
-            if (attestations[i].attestation.subject == subject && attestations[i].attestation.expiration > block.timestamp && !attestations[i].revoked) {
-                liveAttestations.push(i);
-            }
-        }
-        return liveAttestations;
-    }
-
-    /// THIS IS GAS-EXPENSIVE. YOU SHOULD DO THIS OFF-CHAIN IF YOU HAVE THE OPTION TO.
-    function getAllAttestations(address subject) public view returns (uint[] memory) {
-        uint[] memory allAttestations = new uint[](0);
-        for (uint i = 0; i < attestations.length; i++) {
-            if (attestations[i].attestation.subject == subject) {
-                allAttestations.push(i);
-            }
-        }
-        return allAttestations;
-    }
-
     function extendAttestation(uint id, uint new_expiration) public onlyOwner {
-        Attestation attestation = attestations[id].attestation;
+        Attestation memory attestation = attestations[id].attestation;
 
         if (attestation.subject == address(0)) {
             revert("Attestation does not exist");
@@ -85,7 +67,7 @@ contract Attestor is IAttestor {
             revert("New expiration must be greater than current expiration");
         }
 
-        attestations[id].attestation.expirations.push(new_expiration);
+        attestations[id].attestation.expiration = new_expiration;
     }
 
     // gets the expiration date for an attestation
@@ -100,4 +82,5 @@ contract Attestor is IAttestor {
         }
         attestations[id].attestation.associated_docs.push(new_doc);
     }
+
 }
