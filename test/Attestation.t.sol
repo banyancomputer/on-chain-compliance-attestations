@@ -5,20 +5,18 @@ import "@forge-std/Test.sol";
 import "../src/Attestor.sol";
 
 // TODO some more work here...
-contract CounterTest is Test {
+contract AttestationTest is Test {
     Attestor public attestor;
     function setUp() public {
-       counter = new Attestor("Test", cid);
-       counter.setNumber(0);
+        //TODO
+        // attestor = new Attestor("Test", );
     }
 
     function testIncrement() public {
-        counter.increment();
-        assertEq(counter.number(), 1);
+        //NotImplmented
     }
 
     function testSetNumber(uint256 x) public {
-        counter.setNumber(x);
-        assertEq(counter.number(), x);
+        //NotImplemented
     }
 }

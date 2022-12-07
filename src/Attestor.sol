@@ -80,7 +80,7 @@ contract Attestor is IAttestor, Ownable {
         if (attestations[id].attestation.subject == address(0)) {
             revert("Attestation does not exist");
         }
-        attestations[id].attestation.associated_docs.push(new_doc);
+        attestations[id].attestation.associated_docs = new_doc;
     }
 
 }

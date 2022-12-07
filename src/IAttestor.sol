@@ -16,7 +16,7 @@ struct Attestation {
     address subject;
     uint256 expiration;
     string identifier;
-    CIDOrBytes[] associated_docs;
+    CIDOrBytes associated_docs;
 }
 
 interface IAttestor {
