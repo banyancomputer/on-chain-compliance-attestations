@@ -64,7 +64,7 @@ contract Attestor is IAttestor, Ownable {
             revert("Attestation does not exist");
         }
         // get last expiration in list and make sure we're actually extending it. otherwise revert?
-        if (attestation.expiration > new_expiration) {
+        if (attestation.expiration >= new_expiration) {
             revert("New expiration must be greater than current expiration");
         }
 

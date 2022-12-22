@@ -7,10 +7,9 @@ import {Test} from "@forge-std/Test.sol";
 import {Vm} from "@forge-std/Vm.sol";
 
 contract Utilities is Test {
-    Vm internal immutable vm = Vm(HEVM_ADDRESS);
     bytes32 internal nextUser = keccak256(abi.encodePacked("user address"));
 
-    function getNextUserAddress() external returns (address payable) {
+    function getNextUserAddress() public returns (address payable) {
         //bytes32 to address conversion
         address payable user = payable(address(uint160(uint256(nextUser))));
         nextUser = keccak256(abi.encodePacked(nextUser));
