@@ -27,7 +27,7 @@ interface IAttestor {
 
     function issueAttestation(address subject, Attestation memory cert) external returns (uint id);
     function revokeAttestation(uint id) external;
-    function getAttestation(uint id) external view returns (bool attestation_not_found, Attestation memory attestation, bool revoked);
+    function getAttestation(uint id) external view returns (Attestation memory attestation, bool revoked);
 
     function extendAttestation(uint id, uint new_expiration) external;
     function getAttestationExpiration(uint id) external view returns (uint expiration);

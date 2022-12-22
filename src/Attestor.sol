@@ -39,6 +39,7 @@ contract Attestor is IAttestor, Ownable {
     }
 
     function issueAttestation(address subject, Attestation memory cert) public onlyOwner returns (uint id) {
+        require(subject != address(0), "Invalid subject");
         id = uint(keccak256(abi.encodePacked(subject, cert.identifier, block.timestamp)));
         if (attestations[id].attestation.subject != address(0)) {
             revert("Attestation already exists");
@@ -50,8 +51,8 @@ contract Attestor is IAttestor, Ownable {
         attestations[id].revoked = true;
     }
 
-    function getAttestation(uint id) public view returns (bool attestation_not_found, Attestation memory attestation, bool revoked) {
-        attestation_not_found = attestations[id].attestation.subject == address(0);
+    function getAttestation(uint id) public view returns (Attestation memory attestation, bool revoked) {
+        require(attestations[id].attestation.subject != address(0), "Attestation does not exist");
         attestation = attestations[id].attestation;
         revoked = attestations[id].revoked;
     }

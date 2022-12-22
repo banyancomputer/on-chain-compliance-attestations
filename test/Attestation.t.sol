@@ -21,9 +21,9 @@ contract AttestationTest is Test {
 
     function test_getsetAttestorInfo() public {
         CIDOrBytes memory settingCidOrBytes = CIDOrBytes({isCID:true, cid:"0x", data:"0x"});
-        //TOFIX: should not be able to set the same CidOrBytes as before
         attestor.setAttestorInfo(settingCidOrBytes);
         assertEq(attestor.getAttestorInfo().isCID == true, settingCidOrBytes.isCID == true);
+    
         vm.expectRevert();
         attestor.setAttestorInfo(settingCidOrBytes);
     }
@@ -32,17 +32,25 @@ contract AttestationTest is Test {
         Attestation memory attestation = Attestation({subject: users[0], expiration: 1, identifier: 'test', associated_docs: CIDOrBytes({isCID:true, cid:"0x", data:"0x"}) });
         CIDOrBytes memory verifyCidOrBytes = CIDOrBytes({isCID:true, cid:'0x', data:"0x"});
         uint attestationID = attestor.issueAttestation(users[0], attestation);
+        // Should not be able to issue attestation to 0 address
         vm.expectRevert();
         attestor.issueAttestation(address(0), attestation);
+        // Should not be able to re-issue the same attestation to the same user.
         vm.expectRevert();
         attestor.issueAttestation(users[0], attestation);
+        // Should be able to call getAttestation with valid returns
         bool testExpected = false;
-        (testExpected, attestation, testExpected) = attestor.getAttestation(attestationID);
+        (attestation, testExpected) = attestor.getAttestation(attestationID);
+
         assertEq(attestor.getAttestationExpiration(attestationID)==1, true);
         attestor.extendAttestation(attestationID, 2);
         assertEq(attestor.getAttestationExpiration(attestationID)==2, true);
+
+        // Should be only able to extend expiration by greater than existing length
         vm.expectRevert();
         attestor.extendAttestation(attestationID, 2);
+
+        // Should be able to append docs to attestation
         attestor.appendDocToAttestation(attestationID, verifyCidOrBytes);
     }
 
